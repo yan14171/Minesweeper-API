@@ -1,4 +1,6 @@
-﻿namespace minesweeper_api.Data;
+﻿using minesweeper_api.Data.Interfaces;
+
+namespace minesweeper_api.Data.Repositories.Generic;
 
 public class LocalRepository<T> : IRepository<T> where T : class
 {
@@ -24,15 +26,5 @@ public class LocalRepository<T> : IRepository<T> where T : class
         var item = _items.ElementAtOrDefault(id);
 
         return item;
-    }
-
-    public bool Add(T obj)
-    {
-        if(!_items.Contains(obj))
-        {
-            _items.Add(obj);
-            return true;
-        }
-        return false;
     }
 }

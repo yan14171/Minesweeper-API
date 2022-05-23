@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using minesweeper_api.Data;
+using minesweeper_api.Data.Interfaces;
 using minesweeper_api.Data.Models;
+using minesweeper_api.Data.Repositories.Concrete;
+using minesweeper_api.Data.Repositories.Generic;
 using minesweeper_api.Filters;
 using System.Text;
 
@@ -20,8 +22,9 @@ var players = new List<User>
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<IRepository<User>>(new LocalRepository<User>(players));
-builder.Services.AddSingleton<IRepository<Stat>>(new LocalRepository<Stat>(stats));
+builder.Logging.AddConsole();
+
+ConfigureServices(builder);
 
 var jwt_key = GetToken();
 
@@ -53,33 +56,6 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-app.MapGet("stats", (HttpContext context) =>
-{
-    var user = context.User;
-    return stats;
-});
-
-app.MapPost("stats", 
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [AuthExceptionFilter]
-    ([FromBody] Stat stat,
-    HttpContext context,
-    IRepository<User> userRepo) =>
-{
-    var emailClaim = context.User.Claims.FirstOrDefault(n => n.Type.Contains("email"));
-    if (emailClaim is null)
-        throw new UnauthorizedAccessException("Current User's email is not confirmed. Try and login again");
-    
-    var email = emailClaim.Value;
-    var user = userRepo.GetAll().FirstOrDefault(n => n.Email == email);
-    if (user is null)
-        throw new UnauthorizedAccessException("Current user is not valid. Try and login again");
-
-    stat.UserName = user.Name;
-    stats.Add(stat);
-    return Results.Ok(stat);
-});
- 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
@@ -90,7 +66,7 @@ app.UseCors(b => b.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.Run();
 
-byte[] GetToken()
+static byte[] GetToken()
 {
     var data = Environment.GetEnvironmentVariables();
 
@@ -100,4 +76,15 @@ byte[] GetToken()
         throw new InvalidOperationException("Couldn't find the environmental jwt key");
 
     return Encoding.ASCII.GetBytes(key);
+}
+
+static void ConfigureServices(WebApplicationBuilder builder)
+{
+    builder.Services.AddSingleton<IAsyncRepository<User>, DapperRepository<User>>();
+    builder.Services.AddSingleton<IAsyncRepository<Stat>, DapperRepository<Stat>>();
+    builder.Services.AddSingleton<IAsyncCommand<Stat>, StatManipulator>();
+    builder.Services.AddSingleton<IAsyncManipulator<Stat>, StatManipulator>();
+    builder.Services.AddSingleton<IAsyncManipulator<User>, UserManipulator>();
+    builder.Services.AddSingleton<IRepository<User>, LocalRepository<User>>();
+    builder.Services.AddSingleton<IRepository<Stat>, LocalRepository<Stat>>();
 }
