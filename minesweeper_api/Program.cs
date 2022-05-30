@@ -1,24 +1,13 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.IdentityModel.Tokens;
 using minesweeper_api.Data.Interfaces;
 using minesweeper_api.Data.Models;
 using minesweeper_api.Data.Repositories.Concrete;
 using minesweeper_api.Data.Repositories.Generic;
-using minesweeper_api.Filters;
+using minesweeper_api.Hubs;
+using minesweeper_api.Services;
 using System.Text;
-
-var stats = new List<Stat>
-{
-    new Stat{ UserName = "Player", Date = DateTime.Now, MinesAtStart = 91, MinesLeft = 0, SecondsTaken = 350 },
-    new Stat{ UserName = "Player1", Date = DateTime.Now, MinesAtStart = 91, MinesLeft = 0, SecondsTaken = 782 },
-};
-var players = new List<User>
-{
-    new User{ Email = "player@test.com", Name = "Player", Password = "password"},
-    new User{ Email = "player1@test.com", Name = "Player1", Password = "password"},
-};
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,31 +15,13 @@ builder.Logging.AddConsole();
 
 ConfigureServices(builder);
 
-var jwt_key = GetToken();
-
-var jwtConfig = new JwtConfig { Secret = Encoding.ASCII.GetString(jwt_key) };
-
-builder.Services.AddSingleton<JwtConfig>(jwtConfig);
-
 builder.Services.AddAuthentication(opt =>
 {
-    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultAuthenticateScheme = global::Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultChallengeScheme = global::Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultScheme = global::Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
 })
-    .AddJwtBearer(conf =>
-    {
-        conf.SaveToken = true;
-        conf.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(jwt_key),
-            ValidateIssuer = false, //
-            ValidateAudience = false, //
-            RequireExpirationTime = false,
-            ValidateLifetime = true,
-        };
-    });
+    .AddJwtBearer(conf => ConfigureJWT(conf, builder));
 
 builder.Services.AddControllers();
 
@@ -61,6 +32,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<GameHub>("/game");
 
 app.UseCors(b => b.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
@@ -80,6 +53,12 @@ static byte[] GetToken()
 
 static void ConfigureServices(WebApplicationBuilder builder)
 {
+    builder.Services.AddResponseCompression(ops =>
+    {
+        ops.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+            new[] { "application/octet-stream" });
+    });
+    builder.Services.AddSignalR();
     builder.Services.AddSingleton<IAsyncRepository<User>, DapperRepository<User>>();
     builder.Services.AddSingleton<IAsyncRepository<Stat>, DapperRepository<Stat>>();
     builder.Services.AddSingleton<IAsyncCommand<Stat>, StatManipulator>();
@@ -87,4 +66,25 @@ static void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddSingleton<IAsyncManipulator<User>, UserManipulator>();
     builder.Services.AddSingleton<IRepository<User>, LocalRepository<User>>();
     builder.Services.AddSingleton<IRepository<Stat>, LocalRepository<Stat>>();
+    builder.Services.AddSingleton<GameService>();
+}
+
+static JwtBearerOptions ConfigureJWT(JwtBearerOptions conf, WebApplicationBuilder builder)
+{
+    var jwt_key = GetToken();
+    var jwtConfig = new JwtConfig { Secret = Encoding.ASCII.GetString(jwt_key) };
+    builder.Services.AddSingleton<JwtConfig>(jwtConfig);
+
+    conf.SaveToken = true;
+    conf.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(jwt_key),
+        ValidateIssuer = false, //
+        ValidateAudience = false, //
+        RequireExpirationTime = false,
+        ValidateLifetime = true,
+    };
+
+    return conf;
 }
