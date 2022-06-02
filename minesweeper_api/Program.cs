@@ -24,7 +24,10 @@ builder.Services.AddAuthentication(opt =>
     opt.DefaultChallengeScheme = global::Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
     opt.DefaultScheme = global::Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
 })
-    .AddJwtBearer(conf => ConfigureJWT(conf, builder));
+    .AddJwtBearer(conf =>
+    {
+        ConfigureJWT(conf, builder);
+    });
 
 builder.Services.AddControllers().AddNewtonsoftJson();
 
