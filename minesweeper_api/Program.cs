@@ -1,12 +1,15 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.IdentityModel.Tokens;
 using minesweeper_api.Data.Interfaces;
 using minesweeper_api.Data.Models;
+using minesweeper_api.Data.Models.DTOs;
 using minesweeper_api.Data.Repositories.Concrete;
 using minesweeper_api.Data.Repositories.Generic;
 using minesweeper_api.Hubs;
 using minesweeper_api.Services;
+using Newtonsoft.Json;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,7 +26,9 @@ builder.Services.AddAuthentication(opt =>
 })
     .AddJwtBearer(conf => ConfigureJWT(conf, builder));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson();
+
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 var app = builder.Build();
 
@@ -33,9 +38,21 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.UseCors(builder =>
+{
+    builder.WithOrigins("http://localhost:4200")
+        .AllowAnyHeader()
+        .WithMethods("GET", "POST")
+        .AllowCredentials();
+});
+
 app.MapHub<GameHub>("/game");
 
-app.UseCors(b => b.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+app.MapGet("/state", ( GameService service) =>
+{
+    service.PrepareGame();
+    return JsonConvert.SerializeObject(service.GameState);
+});
 
 app.Run();
 
@@ -58,7 +75,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
         ops.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
             new[] { "application/octet-stream" });
     });
-    builder.Services.AddSignalR();
+    builder.Services.AddSignalR().AddNewtonsoftJsonProtocol();
     builder.Services.AddSingleton<IAsyncRepository<User>, DapperRepository<User>>();
     builder.Services.AddSingleton<IAsyncRepository<Stat>, DapperRepository<Stat>>();
     builder.Services.AddSingleton<IAsyncCommand<Stat>, StatManipulator>();

@@ -1,15 +1,14 @@
-﻿{
+{
   "$schema": "https://json.schemastore.org/launchsettings.json",
   "profiles": {
     "minesweeper_api": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
       "launchUrl": "stats",
-      "applicationUrl": "https://localhost:7285;http://localhost:5285",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
+      },
+      "applicationUrl": "https://localhost:7285;http://localhost:5285",
+      "dotnetRunMessages": true
+    }
   }
 }

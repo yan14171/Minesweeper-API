@@ -16,4 +16,8 @@ public class CellDTO
     [Required]
     [Range(0, Board.ROW_COUNT)]
     public int Y { get; set; }
+    public bool isFlaged { get; private set; }
+    public bool isRevealed { get; set; }
+    public bool isBomb { get; set; }
+    public int bombCount { get; set; }
 }

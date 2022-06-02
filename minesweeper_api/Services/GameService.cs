@@ -12,8 +12,24 @@ public class GameService : IDisposable
 
     public GameService()
     {
+        PrepareGame().GetAwaiter().GetResult();
+    }
+
+    public Task PrepareGame()
+    {
+        if (_game?.State.isStarted ?? false)
+            return Task.CompletedTask;
+        
         _game = new Board();
         _game.PrepareGame();
+
+        return Task.CompletedTask;
+    }
+
+    public Task EndGame()
+    {
+        this._game.EndGame();
+        return Task.CompletedTask;
     }
 
     public Task RevealCell(int x, int y)

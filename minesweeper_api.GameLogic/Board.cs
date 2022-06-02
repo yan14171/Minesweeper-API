@@ -1,11 +1,14 @@
-﻿namespace minesweeper_api.GameLogic;
+﻿using System.Text.Json.Serialization;
+
+namespace minesweeper_api.GameLogic;
 public class Board
 {
     public const byte ROW_COUNT = 16;
     public const byte COLUMN_COUNT = 30;
+    [Serializable]
     public struct BoardState
     {
-        public Cell[,] grid;
+        public Cell[,] grid { get; set; }
         public byte BombsGenerated { get; set; }
         public byte BombsLeft { get; set; }
         public bool isGameOver { get; set; }
@@ -45,7 +48,8 @@ public class Board
     {
         generateClean(ROW_COUNT, COLUMN_COUNT);
         try {
-            State = State with { BombsGenerated = (byte)getMineCount(ROW_COUNT, COLUMN_COUNT) };
+            var mineCount = (byte)getMineCount(ROW_COUNT, COLUMN_COUNT);
+            State = State with { BombsGenerated = mineCount, BombsLeft = mineCount };
         }
         catch (InvalidCastException e) {
             throw new InvalidOperationException("Mine count generated should not be more than 255", e);

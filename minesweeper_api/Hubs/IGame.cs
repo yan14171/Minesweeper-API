@@ -1,9 +1,10 @@
-﻿using static minesweeper_api.GameLogic.Board;
+﻿using minesweeper_api.Data.Models.DTOs;
+using static minesweeper_api.GameLogic.Board;
 
 namespace minesweeper_api.Hubs;
 
 public interface IGame
 {
-    Task StateChange(BoardState state);
-    Task EndGame(BoardState state, int winnerId);
+    Task StateChange(BoardStateDTO state);
+    Task EndGame(BoardStateDTO state, int winnerId);
 }

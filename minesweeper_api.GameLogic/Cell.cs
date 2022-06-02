@@ -1,4 +1,6 @@
-﻿namespace minesweeper_api.GameLogic;
+﻿using System.Text.Json.Serialization;
+
+namespace minesweeper_api.GameLogic;
 
 public class Cell
 {
@@ -58,7 +60,10 @@ public class Cell
         IsRevealed = true;
 
         if (IsBomb)
+        {
             _board.EndGame();
+            return;
+        }
 
         if (BombCount == 0)
             for (var i = -1; i <= 1; i++)

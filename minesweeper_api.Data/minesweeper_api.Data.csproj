@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Game\" />
+    <ProjectReference Include="..\minesweeper_api.GameLogic\minesweeper_api.GameLogic.csproj" />
   </ItemGroup>
 
 </Project>
