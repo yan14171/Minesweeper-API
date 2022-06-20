@@ -14,10 +14,8 @@ public class StatManipulator : IAsyncManipulator<Stat>
               @"SELECT s.[UserEmail], s.[Date], s.[MinesAtStart], s.[MinesLeft], s.[SecondsTaken], 'split' as split, u.[Name]
                 FROM Stat s 
                 INNER JOIN [User] u ON s.[UserEmail] = u.[Email]";
-    private readonly IAsyncRepository<Stat> _asyncRepository;
-
     private readonly string SQL_INSERT_STAT =
-        @"INSERT INTO [dbo].[Stat]
+    @"INSERT INTO [dbo].[Stat]
            ([UserEmail]
            ,[Date]
            ,[MinesAtStart]
@@ -29,6 +27,16 @@ public class StatManipulator : IAsyncManipulator<Stat>
            ,@MinesAtStart
            ,@MinesLeft
            ,@SecondsTaken)";
+    private readonly string SQL_DELETE_STAT =
+    @"DELETE FROM [dbo].[Stat]
+      WHERE 
+	 [UserEmail] = @UserEmail and
+     [Date] = @Date and 
+     [MinesAtStart] = @MinesAtStart and
+     [MinesLeft] = @MinesLeft and 
+     [SecondsTaken] = @SecondsTaken";
+
+    private readonly IAsyncRepository<Stat> _asyncRepository;
 
     public StatManipulator(IAsyncRepository<Stat> asyncRepository)
     {
@@ -37,7 +45,7 @@ public class StatManipulator : IAsyncManipulator<Stat>
 
     public async Task<Stat> AddAsync(Stat obj)
     {
-        var connection = new SqlConnection(ConnectionString);
+        using var connection = new SqlConnection(ConnectionString);
         await connection.ExecuteAsync(SQL_INSERT_STAT, param: obj);
         return obj;
     }
@@ -55,8 +63,12 @@ public class StatManipulator : IAsyncManipulator<Stat>
         return stats;
     }
 
-    public Task<Stat> GetById(int id)
+    public Task<Stat> GetById(int id) => _asyncRepository.GetById(id);
+
+    public async Task<Stat> RemoveAsync(Stat obj)
     {
-        return _asyncRepository.GetById(id);
+        using var connection = new SqlConnection(ConnectionString);
+        await connection.ExecuteAsync(SQL_DELETE_STAT, param: obj);
+        return obj;
     }
 }

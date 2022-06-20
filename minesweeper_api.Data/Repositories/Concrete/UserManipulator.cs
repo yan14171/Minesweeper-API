@@ -27,7 +27,12 @@ public class UserManipulator : IAsyncManipulator<User>
     public string ConnectionString { get => this._userRepo.ConnectionString; init => ConnectionString = value; }
     public string SQL_SELECT { get => this._userRepo.SQL_SELECT; init => SQL_SELECT = value; }
     public string SQL_SELECT_BYID { get => this._userRepo.SQL_SELECT; init => SQL_SELECT = value; }
-
+    private readonly string SQL_DELETE_USER =
+    @"DELETE FROM [dbo].[User]
+      WHERE 
+	 [Email] = @Email and
+     [Name] = @Name and 
+     [Password] = @Password";
     public async Task<User> AddAsync(User obj)
     {
         var connection = new SqlConnection(ConnectionString);
@@ -38,4 +43,11 @@ public class UserManipulator : IAsyncManipulator<User>
     public Task<IEnumerable<User>> GetAll() => this._userRepo.GetAll();
 
     public Task<User> GetById(int id) => this._userRepo.GetById(id);
+
+    public async Task<User> RemoveAsync(User obj)
+    {
+        using var connection = new SqlConnection(ConnectionString);
+        await connection.ExecuteAsync(SQL_DELETE_USER, obj);
+        return obj;
+    }
 }

@@ -40,10 +40,11 @@ static class ExceptionExtensions
 {
     public static List<string> GetExceptionMessages(this Exception e)
     {
-        List<string> msgs = new List<string> { e.Message };
         if (e == null) return new List<string> { string.Empty };
+        
+        List<string> msgs = new List<string> { e.Message };
         if (e.InnerException != null)
-            msgs.Add("\r\nInnerException: " + GetExceptionMessages(e.InnerException));
+            msgs.AddRange(GetExceptionMessages(e.InnerException));
         return msgs;
     }
 }

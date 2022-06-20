@@ -1,68 +1,102 @@
-﻿using minesweeper_api.GameLogic;
+﻿using minesweeper_api.Data.Interfaces;
+using minesweeper_api.GameLogic;
 using static minesweeper_api.GameLogic.Board;
 
 namespace minesweeper_api.Services;
 
 public class GameService : IDisposable
 {
-    //private List<BoardInfo>
-    private Board _game;
+    private readonly ILobbyManipulator _lobbyManipulator;
+    private readonly IBoardManipulator _boardManipulator;
 
-    public BoardState GameState { get => _game.State; }
+    public BoardState GameState(int gameId) => _boardManipulator.GetById(gameId).State;
 
-    public GameService()
+    public GameService(ILobbyManipulator lobbyManipulator, IBoardManipulator boardManipulator)
     {
-        PrepareGame().GetAwaiter().GetResult();
+        _lobbyManipulator = lobbyManipulator;
+        _boardManipulator = boardManipulator;
     }
 
-    public Task PrepareGame()
+    public async Task<Board> PrepareGame(int gameId)
     {
-        if (_game?.State.isStarted ?? false)
-            return Task.CompletedTask;
+        var game = _boardManipulator.GetById(gameId);
+        if (game is null)
+            throw new NullReferenceException("Cannot prepare a game, which was not created before");
         
-        _game = new Board();
-        _game.PrepareGame();
-
-        return Task.CompletedTask;
+        if (game.State.isStarted)
+            return game;
+        
+        game.PrepareGame();
+        
+        return game;
     }
 
-    public Task EndGame()
+    public async Task<Board> EndGame(int gameId)
     {
-        this._game.EndGame();
-        return Task.CompletedTask;
+        var game = _boardManipulator.GetById(gameId);
+        game.EndGame();
+        return game;
     }
-
-    public Task RevealCell(int x, int y)
+    
+    public async Task<Board> RevealCell(int x, int y, int gameId)
     {
-        var cells = _game.GetRows();
+        var game = _boardManipulator.GetById(gameId);
+
+        var cells = game.GetRows();
 
         cells[y, x].Reveal();
 
-        return Task.CompletedTask;
+        return game;
     }
     
-    public Task FlagCell(int x, int y)
+    public async Task<Board> FlagCell(int x, int y, int gameId)
     {
-        var cells = _game.GetRows();
+        var game = _boardManipulator.GetById(gameId);
+
+        var cells = game.GetRows();
 
         cells[y, x].Flag();
 
-        return Task.CompletedTask;
+        return game;
     }
 
-    public Task RevealAroundCell(int x, int y)
+    public async Task<Board> RevealAroundCell(int x, int y, int gameId)
     {
-        var cells = _game.GetRows();
+        var game = _boardManipulator.GetById(gameId);
+
+        var cells = game.GetRows();
 
         cells[y, x].RevealAround();
 
-        return Task.CompletedTask;
+        return game;
     }
 
+    public Task<bool> TryValidateUserGameInLobby(int lobbyId, string userEmail, out int gameId)
+    {
+        var board = _boardManipulator.GetAll().FirstOrDefault(b => b.LobbyId == lobbyId);
+        if (board is null)
+        {
+            gameId = -1;
+            return Task.FromResult(false);
+        }
+        try
+        {
+            var lobby = _lobbyManipulator.GetById(board.LobbyId.Value);
+            if (!(lobby.UserIdentifiers?.Contains(userEmail) ?? false))
+                throw new InvalidOperationException();
+            gameId = board.Id.Value;
+            return Task.FromResult(true);
+        }
+        catch(InvalidOperationException ex)
+        {
+            gameId = -1;
+            return Task.FromResult(false);
+        }
+    }
+    
     public void Dispose()
     {
-        throw new NotImplementedException();
+        foreach (var item in _boardManipulator.GetAll().Where(n => n.State.isStarted))
+                item.EndGame();
     }
 }
-
-//public record BoardInfo(int Id, Board board);

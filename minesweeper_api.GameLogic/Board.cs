@@ -14,6 +14,8 @@ public class Board
         public bool isGameOver { get; set; }
         public bool isStarted { get; set; }
     }
+    public int? Id { get; set; }
+    public int? LobbyId { get; set; }
     public BoardState State { get; private set; }
     public Cell[,] GetRows()
     {
@@ -49,7 +51,7 @@ public class Board
         generateClean(ROW_COUNT, COLUMN_COUNT);
         try {
             var mineCount = (byte)getMineCount(ROW_COUNT, COLUMN_COUNT);
-            State = State with { BombsGenerated = mineCount, BombsLeft = mineCount };
+            State = State with { BombsGenerated = mineCount, BombsLeft = mineCount, isGameOver = false };
         }
         catch (InvalidCastException e) {
             throw new InvalidOperationException("Mine count generated should not be more than 255", e);

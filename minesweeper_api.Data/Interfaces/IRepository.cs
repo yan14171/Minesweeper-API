@@ -1,6 +1,6 @@
 ﻿namespace minesweeper_api.Data.Interfaces;
 
-public interface IRepository<T> where T : class
+public interface IRepository<T>
 {
     T GetById(int id);
 

@@ -13,16 +13,13 @@ public class StatsController : ControllerBase
 {
     private readonly IAsyncManipulator<User> _userManipulator;
     private readonly IAsyncManipulator<Stat> _statManipulator;
-    private readonly ILogger<StatsController> _logger;
 
     public StatsController(
         IAsyncManipulator<User> userManipulator,
-        IAsyncManipulator<Stat> statManipulator,
-        ILogger<StatsController> logger)
+        IAsyncManipulator<Stat> statManipulator)
     {
-        this._userManipulator = userManipulator;
-        this._statManipulator = statManipulator;
-        this._logger = logger;
+        _userManipulator = userManipulator;
+        _statManipulator = statManipulator;
     }
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
