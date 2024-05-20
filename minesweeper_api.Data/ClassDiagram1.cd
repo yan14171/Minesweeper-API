@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="minesweeper_api.Data.Models.DTOs.LobbyDTO">
+    <Position X="24" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAgAAAAEAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Models\DTOs\LobbyDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="minesweeper_api.Data.Models.Lobby">
+    <Position X="24" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAABAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Lobby.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="minesweeper_api.Data.Repositories.Concrete.LocalBoardManipulator" BaseTypeListCollapsed="true">
+    <Position X="9" Y="5.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAABAAAQAAAAAAAIgAAAAAAAIA=</HashCode>
+      <FileName>Repositories\Concrete\BoardManipulator.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="boards" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="minesweeper_api.Data.Repositories.Concrete.LocalLobbyManipulator" BaseTypeListCollapsed="true">
+    <Position X="20" Y="2.5" Width="2" />
+    <AssociationLine Name="lobbys" Type="minesweeper_api.Data.Models.Lobby" ManuallyRouted="true" FixedToPoint="true">
+      <Path>
+        <Point X="22" Y="3.062" />
+        <Point X="24" Y="3.062" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAZAAAAAAAAAAAAAAAAABAAAQAAAAAAAAgAAAACAAIA=</HashCode>
+      <FileName>Repositories\Concrete\LobbyManipulator.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="lobbys" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="minesweeper_api.Data.Repositories.Concrete.StatManipulator" BaseTypeListCollapsed="true">
+    <Position X="17.25" Y="4.5" Width="2" />
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAgAAAMAAAEAQAAAAiAAAAAAMIA=</HashCode>
+      <FileName>Repositories\Concrete\StatManipulator.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_asyncRepository" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="minesweeper_api.Data.Repositories.Concrete.UserManipulator" BaseTypeListCollapsed="true">
+    <Position X="15.25" Y="4.5" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <AssociationLine Name="_userRepo" Type="minesweeper_api.Data.Interfaces.IAsyncRepository&lt;T&gt;" ManuallyRouted="true" FixedToPoint="true">
+      <Path>
+        <Point X="15.25" Y="6.312" />
+        <Point X="13.5" Y="6.312" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAgAAAEAAEAAAAAAAiAAAAAAEII=</HashCode>
+      <FileName>Repositories\Concrete\UserManipulator.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_userRepo" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="minesweeper_api.Data.Repositories.Generic.DapperRepository&lt;T&gt;" BaseTypeListCollapsed="true">
+    <Position X="11.5" Y="7.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAgAAAAAAAAAAAAIAAAAAAAAiAAAAAAEIA=</HashCode>
+      <FileName>Repositories\Generic\DapperRepository.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_logger" />
+      <Field Name="_config" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="minesweeper_api.Data.Repositories.Generic.LocalRepository&lt;T&gt;" BaseTypeListCollapsed="true">
+    <Position X="6.5" Y="4.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAgAAAAAAAIA=</HashCode>
+      <FileName>Repositories\Generic\LocalRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="minesweeper_api.GameLogic.Board">
+    <Position X="6.25" Y="7.25" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="minesweeper_api.GameLogic.Board.BoardState">
+        <TypeIdentifier />
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier />
+  </Class>
+  <Interface Name="minesweeper_api.Data.Interfaces.ICommand&lt;T&gt;" Collapsed="true">
+    <Position X="10" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\ICommand.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="minesweeper_api.Data.Interfaces.IAsyncCommand&lt;T&gt;">
+    <Position X="18" Y="2.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\ICommand.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="minesweeper_api.Data.Interfaces.IAsyncManipulator&lt;T&gt;">
+    <Position X="16" Y="1" Width="1.5" />
+    <InheritanceLine Type="minesweeper_api.Data.Interfaces.IAsyncRepository&lt;T&gt;" ManuallyRouted="true" FixedFromPoint="true">
+      <Path>
+        <Point X="12.562" Y="5" />
+        <Point X="12.562" Y="3.248" />
+        <Point X="16.75" Y="3.248" />
+        <Point X="16.75" Y="2.127" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IManipulator.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="minesweeper_api.Data.Interfaces.IManipulator&lt;T&gt;" Collapsed="true">
+    <Position X="10" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IManipulator.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="minesweeper_api.Data.Interfaces.ILobbyManipulator">
+    <Position X="20" Y="0.5" Width="1.5" />
+    <InheritanceLine Type="minesweeper_api.Data.Interfaces.IManipulator&lt;T&gt;" ManuallyRouted="true" FixedToPoint="true">
+      <Path>
+        <Point X="11.5" Y="2.16" />
+        <Point X="11.5" Y="2.083" />
+        <Point X="11.8" Y="2.083" />
+        <Point X="11.8" Y="0.243" />
+        <Point X="20.75" Y="0.243" />
+        <Point X="20.75" Y="0.5" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
+      <FileName>Interfaces\IManipulator.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="minesweeper_api.Data.Interfaces.IBoardManipulator" Collapsed="true">
+    <Position X="9.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IManipulator.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="minesweeper_api.Data.Interfaces.IRepository&lt;T&gt;" Collapsed="true">
+    <Position X="6.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAIA=</HashCode>
+      <FileName>Interfaces\IRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="minesweeper_api.Data.Interfaces.IAsyncRepository&lt;T&gt;">
+    <Position X="11.75" Y="5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAiAAAAAAEIA=</HashCode>
+      <FileName>Interfaces\IRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Microsoft.Extensions.Logging.ILogger&lt;TCategoryName&gt;" Collapsed="true">
+    <Position X="14.25" Y="8.25" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Microsoft.Extensions.Configuration.IConfiguration" Collapsed="true">
+    <Position X="14.25" Y="9.25" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

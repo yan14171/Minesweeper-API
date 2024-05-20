@@ -9,11 +9,11 @@ using minesweeper_api.Services;
 namespace minesweeper_api.Hubs;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class GameHub : Hub<IGame>
+public class GameHub : Hub<IGame>, IGameHub
 {
     private readonly IMapper _mapper;
     private readonly GameService _gameService;
-        
+
     public GameHub(IMapper mapper, GameService gameService)
     {
         _mapper = mapper;
@@ -30,7 +30,7 @@ public class GameHub : Hub<IGame>
         var gameId = GetGameId();
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, GetGroupName(gameId));
     }
-    public async Task PrepareGame() 
+    public async Task PrepareGame()
     {
         var gameId = GetGameId();
         var game = await _gameService.PrepareGame(gameId);
