@@ -1,4 +1,5 @@
 ﻿using minesweeper_api.Data.Interfaces;
+using minesweeper_api.Data.Models;
 using minesweeper_api.GameLogic;
 using static minesweeper_api.GameLogic.Board;
 
@@ -8,6 +9,8 @@ public class GameService : IDisposable
 {
     private readonly ILobbyManipulator _lobbyManipulator;
     private readonly IBoardManipulator _boardManipulator;
+
+    private Dictionary<int, AiStat> _moveStats = new Dictionary<int, AiStat>();
 
     public BoardState GameState(int gameId) => _boardManipulator.GetById(gameId).State;
 
@@ -27,6 +30,8 @@ public class GameService : IDisposable
             return game;
         
         game.PrepareGame();
+
+        _moveStats[gameId] = new AiStat();
         
         return game;
     }
@@ -42,6 +47,8 @@ public class GameService : IDisposable
     {
         var game = _boardManipulator.GetById(gameId);
 
+        _moveStats[gameId].RevealMovesMade++;
+
         var cells = game.GetRows();
 
         cells[y, x].Reveal();
@@ -52,6 +59,8 @@ public class GameService : IDisposable
     public async Task<Board> FlagCell(int x, int y, int gameId)
     {
         var game = _boardManipulator.GetById(gameId);
+
+        _moveStats[gameId].FlagMovesMade++;
 
         var cells = game.GetRows();
 
@@ -84,7 +93,7 @@ public class GameService : IDisposable
             var lobby = _lobbyManipulator.GetById(board.LobbyId.Value);
             if (!(lobby.UserIdentifiers?.Contains(userEmail) ?? false))
                 throw new InvalidOperationException();
-            gameId = board.Id.Value;
+            gameId = GetGameIdByLobbyId(lobbyId);
             return Task.FromResult(true);
         }
         catch(InvalidOperationException ex)
@@ -92,6 +101,15 @@ public class GameService : IDisposable
             gameId = -1;
             return Task.FromResult(false);
         }
+    }
+
+    private int GetGameIdByLobbyId(int lobbyId) => _boardManipulator.GetAll().FirstOrDefault(b => b.LobbyId == lobbyId)?.Id ?? -1;
+
+
+    public Task<AiStat> GetAiStat(int lobbyId) 
+    {
+        var gameId = GetGameIdByLobbyId(lobbyId);
+        return Task.FromResult(_moveStats[gameId]);
     }
     
     public void Dispose()

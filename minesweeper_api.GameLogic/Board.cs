@@ -5,6 +5,8 @@ public class Board
 {
     public const byte ROW_COUNT = 16;
     public const byte COLUMN_COUNT = 30;
+    public int RevealMovesMade { get; set; } = 0;
+    public int FlagMovesMade { get; set; } = 0;
     [Serializable]
     public struct BoardState
     {
@@ -102,8 +104,8 @@ public class Board
     {
         var cellCount = rowCount * columnCount;
         var mineCount = 0.0002 * Math.Pow(cellCount, 2) + 0.0938 * cellCount + 0.8937;
-        //let mineCount = cellCount; //full mine field for testing 
-        //let mineCount = 1; //1 mine for testing 
+        //var mineCount = cellCount; //full mine field for testing 
+        //var mineCount = 50;
 
         return (int)mineCount;
     }

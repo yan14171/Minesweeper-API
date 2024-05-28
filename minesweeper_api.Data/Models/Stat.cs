@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.Contracts;
 using System.Text.Json.Serialization;
 
 namespace minesweeper_api.Data.Models;
@@ -22,4 +23,8 @@ public class Stat
 
     [Required]
     public int SecondsTaken { get; set; }
+
+    public int RevealMovesMade { get; set; }
+
+    public int FlagMovesMade { get; set; }
 }

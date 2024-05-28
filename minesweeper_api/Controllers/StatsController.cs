@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using minesweeper_api.Data.Interfaces;
 using minesweeper_api.Data.Models;
 using minesweeper_api.Filters;
+using minesweeper_api.Services;
 
 namespace minesweeper_api.Controllers;
 
@@ -43,5 +44,15 @@ public class StatsController : ControllerBase
     public async Task<IActionResult> GetStats()
     {
         return Ok(await _statManipulator.GetAll());
+    }
+
+    [HttpGet("{ai}")]
+    public async Task<IActionResult> GetStats([FromQuery]int lobbyId)
+    {
+        var gameService = HttpContext.RequestServices.GetService<GameService>();
+        var aiStat = await gameService.GetAiStat(lobbyId);
+        if (aiStat is null)
+            return NotFound();
+        return Ok(aiStat);
     }
 }

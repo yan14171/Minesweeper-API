@@ -90,6 +90,7 @@ void ConfigureServices(byte[] jwt_key = default)
     {
         options.EnableDetailedErrors = true;
         options.AddFilter<GameHubLobbyFilter>();
+        options.KeepAliveInterval = TimeSpan.FromMinutes(25);
     });
     builder.Services.AddSingleton<IAsyncRepository<User>, DapperRepository<User>>();
     builder.Services.AddSingleton<IAsyncRepository<Stat>, DapperRepository<Stat>>();

@@ -12,7 +12,7 @@ public class Cell
     public int Y { get; }
 
     private Board _board;
-
+    
     public Cell(int X, int Y, bool isRevealed, bool isBomb, Board board, int bombCount, bool isFlagged)
     {
         this.X = X;

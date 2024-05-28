@@ -11,7 +11,7 @@ public class StatManipulator : IAsyncManipulator<Stat>
     public string SQL_SELECT { get => _asyncRepository.SQL_SELECT; init => SQL_SELECT = value; }
     public string SQL_SELECT_BYID { get => _asyncRepository.SQL_SELECT_BYID; init => SQL_SELECT_BYID = value; }
     public string SQL_SELECT_WITHUSER { get; set; } =
-              @"SELECT s.[UserEmail], s.[Date], s.[MinesAtStart], s.[MinesLeft], s.[SecondsTaken], 'split' as split, u.[Name]
+              @"SELECT s.[UserEmail], s.[Date], s.[MinesAtStart], s.[MinesLeft], s.[SecondsTaken], s.[RevealMovesMade], s.[FlagMovesMade], 'split' as split, u.[Name]
                 FROM Stat s 
                 INNER JOIN [User] u ON s.[UserEmail] = u.[Email]";
     private readonly string SQL_INSERT_STAT =
@@ -20,13 +20,17 @@ public class StatManipulator : IAsyncManipulator<Stat>
            ,[Date]
            ,[MinesAtStart]
            ,[MinesLeft]
-           ,[SecondsTaken])
+           ,[SecondsTaken]
+           ,[RevealMovesMade]
+           ,[FlagMovesMade])
      VALUES
            (@UserEmail
            ,@Date
            ,@MinesAtStart
            ,@MinesLeft
-           ,@SecondsTaken)";
+           ,@SecondsTaken
+           ,@RevealMovesMade
+           ,@FlagMovesMade)";
     private readonly string SQL_DELETE_STAT =
     @"DELETE FROM [dbo].[Stat]
       WHERE 
@@ -34,7 +38,9 @@ public class StatManipulator : IAsyncManipulator<Stat>
      [Date] = @Date and 
      [MinesAtStart] = @MinesAtStart and
      [MinesLeft] = @MinesLeft and 
-     [SecondsTaken] = @SecondsTaken";
+     [SecondsTaken] = @SecondsTaken and 
+     [RevealMovesMade] = @RevealMovesMade and 
+     [FlagMovesMade] = @FlagMovesMade";
 
     private readonly IAsyncRepository<Stat> _asyncRepository;
 
